@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/AwsArchitecture.tsx","./src/components/Layout.tsx","./src/data/experiences.ts","./src/data/role.ts","./src/data/timeseries.ts","./src/pages/ExperiencePage.tsx","./src/pages/RolePage.tsx","./src/pages/TimeseriesPage.tsx"],"version":"5.9.3"}
