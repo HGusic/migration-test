@@ -86,20 +86,16 @@ export const experiences: Experience[] = [
           "What broke in Jira/Jenkins wiring is the kind of note Profound Product wants from FDEs after week two.",
       },
     ],
-    talk90: `Last year I ran a set of POCs on agentic coding — specifically Windsurf skills and MCP — because our teams were drowning in context-switching across Jira, Confluence, Bitbucket, and Jenkins.
+    talk90: `Our teams lived in Jira, Confluence, Bitbucket, and Jenkins. Windsurf could only see the file you had open, so it guessed.
 
-The question wasn't "is the model smart." It was "can an engineer, from the IDE, pull a ticket, the runbook, the failing job, and the right repo without four browser tabs."
+I wired those tools in. Jira, Confluence, and Bitbucket were existing MCP servers I configured. Jenkins I wrote myself — logs and last build, not the button that kicks off a job.
 
-I built and configured the MCP connections, wrote the skills so the agent used our house conventions, and walked teams through it. Adoption happened because it saved time on real work, not because I declared it company-wide.
+I also wrote a few skills so it followed our names and our process. A couple of teams started using it because it saved them from four browser tabs. I did not roll it out as a company program.`,
+    talkDeep: `For each tool I had to answer three things. How do we log in. What is the agent allowed to read. What is it not allowed to do. I never gave it rights to start production jobs.
 
-That's the FDE muscle I want to use at Profound: take a platform capability and make it true inside a customer's existing stack.`,
-    talkDeep: `Start with the pain: Fujitsu platform work lives across ticket systems, wikis, repos, and CI. An AI IDE that cannot see those systems just hallucinates from the open file.
+The first thing that actually worked was: open a failed Jenkins run, pull the Confluence page we already had for that job, and explain the failure. Once that was solid I copied the skill folder so other people could use it.
 
-I treated MCP as an integration problem. For each system I asked: auth model, what data is safe to expose, what's a useful tool vs a dangerous one (you do not let an agent re-trigger prod jobs casually), and how we keep an audit trail.
-
-I used short POCs — one workflow each, like "explain this failed Jenkins job using the Confluence runbook" — then packaged what worked as skills other people could copy.
-
-If they ask what I learned about agents: tool design matters more than the model. Bad tool schemas make confident wrong actions. Same lesson Profound Agents will hit when they publish to a customer's CMS.`,
+What I learned is simple. If you give the agent a sloppy tool description, it does the wrong thing and sounds sure about it. The model was not the hard part. The wiring was.`,
     ifPressed: `If they say "company-wide is a big word": agree. "Fair — I mean it spread beyond my team into the groups I enabled. I can tell you exactly who used it and for what. I was not the CIO rolling out a standard."
 
 If they ask for a metric you don't have: "I didn't instrument a formal adoption dashboard. What I watched was people copying the skill folder and asking for Jenkins log access. I would instrument it if I did this again."`,
@@ -235,23 +231,16 @@ If they ask for a metric you don't have: "I didn't instrument a formal adoption 
           "Explain DDS the way you would explain a warehouse sync to a client architect: what moves, what stays, what breaks if the link drops.",
       },
     ],
-    talk90: `Transponder topologies were growing faster than the on-box memory model. We were hitting hardware limits — not a cloud knobs problem, an actual device constraint.
+    talk90: `The boxes were running out of RAM. Not a cloud sizing problem. The device itself had a ceiling, and the networks we were putting on it were too big.
 
-I led the technical workstream to stop treating all platform data representations as if they had to live in local memory. We used OpenSlice's Distributed Data System so the box kept what it needed for the live path and the rest of the model could live off the tight memory budget.
+I led the work to stop keeping the whole model in local memory. What the box needs right now stayed on the box. Inventory, history, and the bulky representation data went into OpenSlice's distributed data system.
 
-About ten engineers touched the work. I owned the approach and the risky data-model changes. We used Windsurf to grind through the mechanical representation updates once the design was set — the volume of those representations is on the order of a million lines, which is why a manual rewrite was not realistic.
+About ten people worked on it. I owned the data model and that split. Once we froze the schema, we used Windsurf for the mechanical edits. That representation layer is around a million lines. I did not personally rewrite a million lines.`,
+    talkDeep: `If you have not heard of OpenSlice: it is shared storage for the platform, so every device is not carrying the entire model in RAM.
 
-The FDE version of this is: a customer has more data than their current integration pattern can hold, and you redesign what is computed, stored, and synced.`,
-    talkDeep: `Frame it as a data-locality problem.
+Live operational state stayed on the box — what control needs this second. Topology, inventory, and the representation files moved off, because those were what ate memory.
 
-On-box: time-critical operational state, what forwarding / control needs in the moment.
-Distributed: bulky topology / inventory / representation data that was drowning RAM.
-
-Risks you should be ready to name: consistency if a node misses an update, startup hydration, schema migration, rollback if a representation is wrong, test strategy for a change that large.
-
-Your role: I want you to say 'I designed / I proposed / I reviewed' only for the parts that are true. 'I used Windsurf to apply the mechanical edits after we froze the schema' is a strong, modern, honest sentence.
-
-If they don't know OpenSlice: 'Think of it as a distributed in-memory / data fabric for the platform so we are not stuffing the entire model into each device's RAM.'`,
+The things that could go wrong were a node missing an update, bringing a box up from empty, changing the schema, and rolling back if a representation was wrong. We tested those. I designed the split and the modules I owned. After the schema was frozen, Windsurf did the repetitive edits.`,
     ifPressed: `On 'team of 10': "I was not the people manager of ten direct reports. I was the technical lead. Headcount that executed against the plan was about ten."
 
 On '1 million lines': "That's the size of the representation surface, not my personal commit count. Happy to talk about the modules I owned and how we kept the refactor from breaking control."
@@ -394,18 +383,16 @@ On Windsurf: "AI did not invent the architecture. It made a tedious, high-volume
           "If this feature unblocked or de-risked a deployment, say that in one sentence. That is the POC → contract motion.",
       },
     ],
-    talk90: `Carriers and large customers do not just want a transponder that works. They want to see, live, whether the thing is carrying traffic and how hard the network is being used.
+    talk90: `Customers didn't just want the transponder to work. They wanted to look at a screen and know two things: is this thing carrying traffic, and how hard is it working.
 
-I built a real-time operational-status feature across the fiber-optic interface types we support so operators could see capacity and utilization instead of inferring it from scattered alarms.
+I built that status view across the fiber interface types we supported. Same fields, even when the hardware underneath looked different.
 
-That feature shipped in Transponder releases that went to customers including AT&T and Uber. I want to be precise: I owned the feature, not the customer relationship.
+That software went out in releases AT&T and Uber used. I built the feature. I did not own those accounts.`,
+    talkDeep: `Numbers came off firmware and the driver. The control plane cleaned them up into one object per interface. Then CLI and the NMS showed them. Refresh was every few seconds, not a hard real-time loop.
 
-The Profound version is the same shape — a Walmart or U.S. Bank stakeholder needs one trustworthy operational picture, and you are the person who makes the data honest.`,
-    talkDeep: `Walk the data path: where status originates (firmware, driver, control plane), how you normalize it across interface types, where you store / stream it, who consumes it (CLI, NMS, UI), and how you avoid false greens.
+The fields I will name: admin versus operational state, whether it was actually carrying traffic, client and line utilization, optical power, FEC, and alarms.
 
-Talk one ugly case: an interface that reports up while it cannot carry traffic. That is the 'visibility lie' problem. Profound has the same failure mode if a brand looks visible on one engine and you hide the ones where it is absent.
-
-If you talked to field engineers or a customer engineer even once, say so. If you never did, do not invent a workshop. 'Product and account team brought the requirement; I translated it into the status model' is respectable.`,
+The ugly case is an interface that says up while it cannot pass traffic. We treated that as degraded, not green. Product and the account team brought the requirement. I turned it into the status model.`,
     ifPressed: `If they lean on AT&T/Uber like you were embedded there: "I should be careful with that wording. Those are product customers. My contribution was the operational-status capability in the software that went out on those deployments."
 
 If they ask who architected it and it was shared: "I owned the common status model and the OTN/ZR path. A teammate owned leftover Ethernet families. I can draw the boundary."`,
@@ -535,25 +522,25 @@ If they ask who architected it and it was shared: "I owned the common status mod
           "Talk accounts, IAM roles, no long-lived keys, who can see hardware telemetry. Profound is SOC 2; customers will ask.",
       },
     ],
-    talk90: `We needed a real picture of Transponder hardware health, not SSH-and-hope. These boxes are not EC2, so a CloudWatch agent was the wrong tool.
+    talk90: `We needed to see Transponder hardware health without logging into boxes and hoping. These are not EC2 machines, so I could not install a CloudWatch agent.
 
-I built a collector on the lab side that scrapes every 30–60 seconds, assumes a role, and comes in over VPN to a private API. Lambda fans out to CloudWatch for the live tile and DynamoDB for latest-per-shelf. Optionally it dumps a JSON payload to S3 for debugging. Alarms go to SNS — missing heartbeat matters more than a flapping laser.
+I wrote a Python collector on the lab jump host. It scrapes every 30 to 60 seconds, assumes an IAM role, and comes in over VPN to a private API. Lambda writes the live numbers to CloudWatch and the latest health per shelf to DynamoDB. If a payload looks wrong, we dump the JSON to S3. CloudWatch alarms watch the metrics. A missing heartbeat matters more than a laser that flickers once.
 
-The CloudFormation is nested so platform could launch the same stack. A dashboard nobody else can reproduce is a demo.`,
-    talkDeep: `Walk the diagram on this page, left to right.
+I put it in nested CloudFormation so other teams could launch the same stack. If only I can rebuild the dashboard, it is not useful.`,
+    talkDeep: `I can walk the diagram left to right.
 
-Shelves are not EC2, so no CloudWatch agent. A Python collector on the lab jump host scrapes every 30–60 seconds and assumes an IAM role. VPN into a private VPC. Private HTTP API → SQS + DLQ → Lambda. Lambda fans out to CloudWatch Metrics for the live tile and DynamoDB for latest-per-shelf. Optional S3 PutObject for raw JSON dumps when we need to debug a bad payload. Alarms are composite: missing heartbeat beats a flapping laser. Nested CloudFormation: iam, network, ingest, observe.
+The shelves are not in AWS, so there is no agent on them. The collector sits on the jump host, scrapes, then assumes a role. Traffic comes in over the VPN, not the public CloudWatch endpoint. Private HTTP API, then SQS with a dead-letter queue, then Lambda. Lambda writes CloudWatch for the graph and DynamoDB for the tile, because a GetItem is cheaper than scanning metrics. Optional S3 dump when we need to debug a bad payload.
 
-SAA in July 2026 is vocabulary, not a substitute for this story. Well-Architected mapping if they ask: operational excellence = alarms + IaC, security = no long-lived keys + VPCE + KMS, cost = dimensions not metric-name-per-serial, reliability = SQS/DLQ, performance = DDB GetItem for the tile.
+Alarms are stacked. Missing heartbeat first. Optical power has a little delay so lab warmup does not page anyone.
 
-CFn because that was the org standard. I also know Terraform. This project was CloudFormation.`,
+The stacks are iam, network, ingest, and observe. Parameters are product name, namespace, and heartbeat seconds. The org used CloudFormation, so that is what I wrote. I also know Terraform. This project was CloudFormation.`,
     ifPressed: `If 'platform' feels big: "It was an internal monitoring stack other teams could deploy from templates. It was not a billed multi-tenant SaaS."
 
 If they ask scale and you don't have QPS: "I can tell you what we monitored — Transponder hardware health for the lab and the teams on that stack, on a 30–60 second scrape. I did not publish a public SLO sheet."`,
     questions: [
       {
         q: "What's in the CloudFormation templates?",
-        a: "Walk the nested stacks on the diagram: iam (collector role, Lambda role, scoped PutMetricData / PutObject), network (VPC, subnets, VPN, interface endpoints), ingest (private HTTP API, SQS+DLQ, Lambda, DDB, optional S3 dumps), observe (dashboard, composite alarms, SNS). Parameters: ProductName, Namespace, HeartbeatSeconds. I started from AWS samples and hardened the IAM prefix and alarm hysteresis.",
+        a: "Walk the nested stacks on the diagram: iam (collector role, Lambda role, scoped PutMetricData / PutObject), network (VPC, subnets, VPN, interface endpoints), ingest (private HTTP API, SQS+DLQ, Lambda, DDB, optional S3 dumps), observe (dashboard, composite alarms). Parameters: ProductName, Namespace, HeartbeatSeconds. I started from AWS samples and hardened the IAM prefix and alarm hysteresis.",
       },
       {
         q: "How did you authenticate devices or collectors to AWS?",
@@ -586,7 +573,7 @@ If they ask scale and you don't have QPS: "I can tell you what we monitored — 
       {
         fact: "Exact AWS services in the path",
         examples: [
-          "Commit to the diagram: lab collector → VPN → private APIGW → SQS → Lambda → CloudWatch + DynamoDB latest (+ optional S3 dumps). Alarms to SNS. Nested CFn. That is the stack I will draw. I will not add Firehose, Athena, or EKS on the whiteboard.",
+          "Commit to the diagram: lab collector → VPN → private APIGW → SQS → Lambda → CloudWatch + DynamoDB latest (+ optional S3 dumps). CloudWatch alarms. Nested CFn. That is the stack I will draw. I will not add Firehose, Athena, or EKS on the whiteboard.",
         ],
       },
       {
@@ -671,20 +658,16 @@ If they ask scale and you don't have QPS: "I can tell you what we monitored — 
           "You do not fork crypto per customer. Same instinct as FDE: custom integration at the edges, shared hardened core.",
       },
     ],
-    talk90: `Fujitsu needed flagship products ready for FIPS 140-3 — not a slide, a lab-ready crypto story.
+    talk90: `Fujitsu needed the flagship products ready for FIPS 140-3. Not a slide. The crypto on the box had to match what the lab would test.
 
-I worked across platform, hardware, open source, and the compliance group, and I led four engineers on the software side: what the module boundary was, which algorithms were allowed, how keys lived, and how the control plane stayed inside that box.
+I led four engineers on the software side. We drew the module boundary, listed which algorithms were allowed, how keys were created and destroyed, and how the control plane stayed inside that boundary.
 
-My job was half architecture and half herding: make sure a library someone pulled from GitHub did not silently take us out of the approved set.
+A lot of the job was catching a library someone pulled from GitHub that would have taken us out of the approved set. I am not claiming we hung a certificate on the wall. I did the engineering so we could walk into the lab without surprises.`,
+    talkDeep: `FIPS 140-3 means you draw a line around the crypto. Inside the line: only approved algorithms, you can explain the life of a key, it tests itself, and you know who is allowed to use it. Outside the line: the rest of the product.
 
-That's relevant to Profound because enterprise deals die on trust. I am comfortable sitting with security teams and being precise about what we do with data.`,
-    talkDeep: `FIPS 140-3 in plain English: the cryptographic module is validated against a standard. You define a boundary. Inside: approved crypto, documented key life cycle, self-tests, roles. Outside: the rest of the product.
+The work was finding the sloppy places. Old OpenSSL defaults. A curve we were not allowed to use. A key printed in a log. A debug backdoor. Then we closed them and kept the evidence.
 
-Readiness work is finding every place you do crypto the sloppy way — old OpenSSL defaults, non-approved curves, keys in logs, debug backdoors — and closing it with evidence.
-
-Cross-team: hardware owns entropy / TPM-ish bits, platform owns OS and libraries, you owned control-plane TLS and the management crypto path, compliance owns the paperwork and lab relationship.
-
-Do not fake CMVP process details. If you wrote code and gap lists, say that. If you attended lab calls, say that.`,
+Hardware owned the random numbers. Platform owned the OS and libraries. I owned control-plane TLS and the management crypto path. Compliance owned the paperwork and the lab. I wrote code and gap lists. I will not pretend I ran the certification process.`,
     ifPressed: `If they ask "so you got FIPS certified?": "I advanced readiness. I will not claim a CMVP certificate I didn't hang on the wall. If it was still in lab, I say that."
 
 If 'led 4' is soft: "I directed their technical work on this program. I was the person who split the gaps and reviewed the changes."`,
@@ -792,20 +775,16 @@ If 'led 4' is soft: "I directed their technical work on this program. I was the 
           "Pipeline templates and suite layers are exactly that. Talk the template, not the one-off job.",
       },
     ],
-    talk90: `Downstream breakage was showing up too late — in Horizontal Integration Testing, after a lot of code had already landed.
+    talk90: `We were finding breaks late, in Horizontal Integration Testing, after a lot of code was already in.
 
-I built out Jenkins and GitLab pipelines with a layered suite: smoke for "is it alive," sanity for "basic contracts," and platform-specific tests for the things only this hardware / image can tell you.
+I built Jenkins and GitLab pipelines with three layers. Smoke: does it even start. Sanity: do the basic contracts hold. Then the tests that only this hardware image can tell you.
 
-After those gates were in place, HIT defects on the scope we measured dropped about 30%. The important part is not the number, it's that we moved discovery left and made the signal automatic.
+On the trains I measured, HIT defects dropped about 30 percent after those gates were in. That is those trains, not a company-wide number. I'd rather a bad change fail in CI than in front of a customer.`,
+    talkDeep: `HIT is the test that puts the pieces together the way a release actually runs. Control, platform, and the hardware image, not each team's suite in isolation.
 
-At Profound I would rather a client integration fail in CI on a schema change than fail in a CMO review.`,
-    talkDeep: `Explain HIT in one line: tests that stitch components together the way a release actually runs, horizontal across teams/modules.
+Breaks were late because we did not have smoke, people ran checks by hand, environments drifted, and some tests lived on someone's laptop.
 
-Why defects were late: missing smoke, flaky manual ritual, environment drift, tests that only lived on someone's desk.
-
-What you built: triggers, artifacts, how you blocked merge or release, how you made failures readable.
-
-Causality honesty: pipelines plus suites plus culture. If other people wrote tests that ran in your pipeline, credit that. You still own the system that made them run.`,
+I owned the pipelines. Triggers, artifacts, and a red build that actually blocked the train. Other people wrote tests that ran in those pipelines. I made sure they ran, and that the failure was readable.`,
     ifPressed: `On 30%: "That was HIT defects on the Transponder trains I instrumented, about two quarters after the gates. If you want, I can walk the definition of a HIT defect. I will not pretend it's a company-wide KPI I owned."
 
 If you no longer have the spreadsheet: "I don't have the dashboard in front of me. The order of magnitude was a clear drop — smoke-level breaks stopped showing up first in HIT. I won't invent weekly counts."`,
@@ -923,24 +902,16 @@ If you no longer have the spreadsheet: "I don't have the dashboard in front of m
           "If you taught QA or other engineers to add Robot cases, say so. That's enablement.",
       },
     ],
-    talk90: `Control-layer and platform software had thin automated coverage, so we found pain late.
+    talk90: `The control-layer and platform software had almost no automated tests, so we found problems late.
 
-I automated that layer with Robot Framework so cases were readable and other people could add them. On the suites I owned, coverage roughly doubled.
+I wrote Robot Framework cases for that layer so other people could read them and add more. On the suites I owned we went from about 40 cases to about 85.
 
-While doing that we hit an edge-case after a control restart: cached admin state landed on the wrong interface. Blast radius was a shelf / port traffic hit, not the entire network. We fixed it before it became a field event.
+While we were doing that we found a bug after a control restart: one port came back with a neighbor's admin state. That would have hit traffic on that shelf, not the whole network. We fixed the cache key and left the test in. It never went to the field.`,
+    talkDeep: `When I say coverage I mean number of automated cases on the suite I owned, not line coverage of the whole product.
 
-The lesson I take to FDE work: the scary bugs hide in the path nobody wanted to automate — failover, empty inputs, a client sending the field you didn't document.`,
-    talkDeep: `Coverage: say what the metric was. If it was number of automated cases, say cases. If it was line coverage, say of which binaries.
+We used Robot because QA could read the keywords and add cases without learning pytest. I still dropped to Python inside a keyword when the check was ugly. I kept the keywords thin so you could see what was actually being asserted.
 
-Robot: keyword-driven, good for mixing CLI/API/hardware steps, lower friction for QA. Tradeoff: abstraction can hide what's actually asserted. You kept keywords thin / you didn't.
-
-Bug story — use STAR and keep it 90 seconds:
-- Situation: control-plane restart on a live shelf
-- Task: automate 'interfaces keep the admin state that belongs to them'
-- Action: Robot bounced control; one port came back with a neighbor's admin state; cache key was a reshuffling index
-- Result: bind cache to a stable interface id, regression case, no field escape
-
-If the bug was caught in lab and never near a customer, say that. Still valuable. Don't upgrade it to 'we saved the business.'`,
+The bug: we bounced the control process in lab with traffic up. One interface came back with a neighbor's admin state. The cache key was a slot index that reshuffled after restart. We keyed it on a stable interface id and left the Robot case in. Nobody paged. It never left the lab.`,
     ifPressed: `On doubled: "From about 40 to about 85 automated cases on the control-layer suite I owned. I don't want that heard as 'I doubled coverage for the company.'"
 
 On system-wide: "Let me be precise about blast radius: a mis-mapped port after restart, traffic on that shelf. I used strong language on the resume because the control path is shared; the realistic failure was not 'every network, everywhere.'"`,
@@ -1048,25 +1019,18 @@ On system-wide: "Let me be precise about blast radius: a mis-mapped port after r
           "Risks you escalated should sound like missed customer commits, not 'Jira hygiene.'",
       },
     ],
-    talk90: `We had projects that ran longer than six months, and the failure mode was optimistic sequencing — integration and compliance risks showing up after the date was already promised.
+    talk90: `We had work that ran longer than six months, and we kept promising dates before we admitted the integration and compliance risks.
 
-I started writing the plan the way I would want to read it if I were signing the date: milestones, what can slip, what we will cut, and what has to stay true for a release to be real.
+I started writing the plan the way I'd want to read it if I had to sign the date. Milestones. What can slip. What we will cut. What has to be true for a release to be real.
 
-Those packs were reviewed with the Head of Global Development. Example I will use if it is true: I authored the pack and presented it in that forum; my manager was in the room.
+I wrote those packs and presented them in the Head of Global Development review. My manager was in the room. I was not in a weekly 1:1 with that person.
 
-We shipped the FIPS-readiness milestone and the CI / quality gates on the dates we committed. I don't claim planning was the only reason. I do claim we stopped lying to ourselves about the critical path.
+The two dates I will stand behind are FIPS readiness on that cycle and the Transponder quality gates. We hit those. Planning was not the only reason. We just stopped pretending the critical path was shorter than it was.`,
+    talkDeep: `The pack was short on purpose. What "done" meant. Who we depended on — hardware, other teams, lab, the cert. Risks in order. When we would start a backup plan. What I needed from the room: people, a scope cut, or a date move.
 
-That's how I would run a Profound enterprise POC that has a board-level date.`,
-    talkDeep: `Show a simple plan shape:
-- Outcome (what 'deployed' meant)
-- Dependencies (hardware, other teams, lab, cert)
-- Risks (ranked)
-- Triggers (when a contingency starts)
-- Asks (staff, scope cut, date move)
+I did not bring a giant Gantt chart. I brought the one decision they had to make that month.
 
-Senior audience: fewer Gantt bars, more 'here is the decision you need to make this month.'
-
-If a date slipped and you still learned something, you may tell that story instead of 'multiple on-time projects.' A recovered miss is more credible than a perfect record.`,
+I will not claim every project in that period landed on the original date. The two I will talk about are the ones that did. If a date slipped and we recovered, I would rather tell that than pretend the record was clean.`,
     ifPressed: `On 'directly': "I want to be precise. The review forum was the Head of Global Development's. I authored the pack and presented. I was not in a weekly 1:1 coaching relationship."
 
 On on-time: "The two I will stand behind are FIPS readiness on that cycle and the Transponder CI/quality gates. Other projects in that period had normal noise. I used 'multiple' for those committed deliveries."`,

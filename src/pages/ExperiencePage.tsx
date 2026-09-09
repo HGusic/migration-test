@@ -19,14 +19,14 @@ export default function ExperiencePage({ slug }: { slug: string }) {
 
       <section className="section talk-driver">
         <div className="section-title">
-          <h3>Talking driver — say this first</h3>
+          <h3>Talking driver — read this out loud</h3>
         </div>
         <div className="script script-driver">{item.talk90}</div>
       </section>
 
       <section className="section">
         <div className="section-title">
-          <h3>If they say “go deeper”</h3>
+          <h3>If they say “go deeper” — keep reading</h3>
         </div>
         <div className="script">{item.talkDeep}</div>
       </section>

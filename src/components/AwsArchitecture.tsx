@@ -27,7 +27,7 @@ const walk = [
   {
     n: "6",
     title: "Alarms a human can trust",
-    say: "Composite alarms. Missing heartbeat matters more than a flapping laser. Optical-power alarms have hysteresis so the lab warmup does not page anyone. SNS fans to email and Slack.",
+    say: "Composite alarms. Missing heartbeat matters more than a flapping laser. Optical-power alarms have hysteresis so the lab warmup does not page anyone.",
   },
   {
     n: "7",
@@ -181,8 +181,8 @@ export default function AwsArchitecture() {
           Messages land in SQS — that wakes Lambda. Lambda can take a small
           batch, validate it, and fan out to CloudWatch Metrics for the live
           tile, DynamoDB for latest health per shelf, and optionally S3 for a
-          JSON debug dump. Alarms go to SNS: missing heartbeat matters more
-          than a flapping laser.
+          JSON debug dump. CloudWatch alarms fire in the dashboard: missing
+          heartbeat matters more than a flapping laser.
         </p>
         <p>
           Nested CloudFormation stands the same stack up for other teams. A
@@ -341,15 +341,8 @@ export default function AwsArchitecture() {
             x={1054}
             y={286}
             n="6"
-            title="CW Alarms → SNS"
+            title="CW Alarms"
             sub="Hysteresis. Heartbeat > flap."
-          />
-          <Box
-            x={1054}
-            y={396}
-            variant="dim"
-            title="Email / Slack"
-            sub="No pager for laser warmup"
           />
 
           <Box
@@ -406,7 +399,6 @@ export default function AwsArchitecture() {
             lx={820}
             ly={310}
           />
-          <Arrow d="M1154,354 L1154,390" label="notify" lx={1162} ly={378} />
         </svg>
       </div>
 
@@ -446,7 +438,7 @@ export default function AwsArchitecture() {
 
 shelves → collector → (VPN + STS + VPCE) → API Gateway → SQS → Lambda
                                                               ↘ CloudWatch → dashboard
-                                                              ↘ CloudWatch → alarms → Slack
+                                                              ↘ CloudWatch → alarms
                                                               ↘ DynamoDB (latest health)
                                                               ↘ S3 (optional JSON dumps)
 
